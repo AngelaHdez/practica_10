@@ -36,3 +36,4 @@ user_source.onmessage = function(e){
         list.append($("<li>").text(names.users[i]));
     }
 };
+
