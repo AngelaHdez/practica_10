@@ -64,7 +64,7 @@ class ChatWithFrames < Sinatra::Base
     if (session['user'] == nil)
       redirect '/'
     else
-      username = session['user']
+      username = session['user'] #nombre del ultimo que llega
     end
     
     stream :keep_open do |out|
@@ -83,16 +83,23 @@ class ChatWithFrames < Sinatra::Base
       out.errback { remove_user_stream_client out }
     end
   end
-  
+
   post '/chat' do
     message = params[:message]
-    
-    if message =~ /\s*\/(\w+)\s+/
+    "hola"
+    puts message
+    #if message =~ /\s*\/(\w+)\s+/ #aqui esta el fallo
+    if message =~ /\s*\/(\w+):\s+((\w+)\s+)*/
+      puts "distingue el tipo de mensaje"
       name = $1
+      puts name
       sender = session['user']
+      puts sender
       if @@clientsByName.has_key? name
+        puts "comprueba el usuario"
         stream_receiver = @@clientsByName[name]
         stream_sender = @@clientsByName[sender]
+      
         
         stream_receiver << "data: #{sender}: #{message}\n\n"
         stream_sender << "data: #{sender}: #{message}\n\n"
