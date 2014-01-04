@@ -17,6 +17,7 @@ class ChatWithFrames < Sinatra::Base
   @@usernames ||= {}
   @@anonymous_counter ||= 0
   @@user_stream_clients ||= []
+
   
   # Setting up a thread that sends the user list to clients every second
   Thread.new do
@@ -86,23 +87,25 @@ class ChatWithFrames < Sinatra::Base
 
   post '/chat' do
     message = params[:message]
-    "hola"
-    puts message
+    #puts message
     #if message =~ /\s*\/(\w+)\s+/ #aqui esta el fallo
     if message =~ /\s*\/(\w+):\s+((\w+)\s+)*/
-      puts "distingue el tipo de mensaje"
+      #puts "distingue el tipo de mensaje"
       name = $1
-      puts name
+      #puts name
       sender = session['user']
-      puts sender
+      #puts sender
       if @@clientsByName.has_key? name
-        puts "comprueba el usuario"
+        #puts "comprueba el usuario"
         stream_receiver = @@clientsByName[name]
         stream_sender = @@clientsByName[sender]
-      
+        mensaje = []
+        mensaje = message.split(':'); 
+        for i in(1..mensaje.length()-1)
+          stream_receiver << "data: Modo privado #{sender}: #{mensaje[i]}\n\n"
+          stream_sender << "data: Modo privado #{sender}: #{mensaje[i]}\n\n"
+        end       
         
-        stream_receiver << "data: #{sender}: #{message}\n\n"
-        stream_sender << "data: #{sender}: #{message}\n\n"
       else #User not found, then broadcast
         broadcast(message, session['user'])
       end
