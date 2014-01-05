@@ -168,6 +168,7 @@ class ChatWithFrames < Sinatra::Base
   def remove_connection(stream, username)
     @@clientsByConnection.delete stream
     @@clientsByName.delete username
+    @@private[@@private[username]] = nil
     @@private.delete username
   end
   
