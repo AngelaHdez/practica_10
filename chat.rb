@@ -88,11 +88,6 @@ class ChatWithFrames < Sinatra::Base
 
   post '/chat' do
     message = params[:message]
-    puts message
-    name = $1
-    puts name
-    sender = session['user']
-    puts sender
     #Establecer el chat privado
     if message =~ /\s*\/(\w+):/
       puts "distingue el tipo de mensaje"
@@ -113,17 +108,7 @@ class ChatWithFrames < Sinatra::Base
           stream_sender = @@clientsByName[sender]
           stream_sender << "data: Para establecer chat con #{name} cierre chats anteriores \n\n"
           puts "Error"
-        end
-        #puts "comprueba el usuario"
-        #stream_receiver = @@clientsByName[name]
-        #stream_sender = @@clientsByName[sender]
-        #mensaje = []
-        #mensaje = message.split(':'); 
-        #for i in(1..mensaje.length()-1)
-          #stream_receiver << "data: Modo privado #{sender}: #{mensaje[i]}\n\n"
-          #stream_sender << "data: Modo privado #{sender}: #{mensaje[i]}\n\n"
-        #end     
-        
+        end       
       else #User not found, then broadcast
         broadcast(message, session['user'])
       end
@@ -131,16 +116,25 @@ class ChatWithFrames < Sinatra::Base
       puts "saliendo del canal"
       @@private[name]= nil
       @@private[sender]= nil
-    elsif ((@@private[name] == sender) and (@@private[sender]== name))
-      puts "mismo canal a y b se envian lo que quieran"
-      puts name
-      puts sender
-      stream_receiver = @@clientsByName[name]
-      stream_sender = @@clientsByName[sender]
-      stream_receiver << "data: #{sender}: #{message}\n\n"
-      stream_sender << "data: #{sender}: #{message}\n\n"
+    
     else
-      broadcast(message, session['user'])
+      puts "entro en el mensaje de otro mensaje"
+      puts message
+      name = $1 # esto falla
+      puts "nombre " 
+      puts name
+      sender = session['user']
+      puts "sender " 
+      puts sender
+       if ((@@private[sender] != nil))
+        puts "mismo canal a y b se envian lo que quieran"
+        stream_receiver = @@clientsByName[@@private[sender]]
+        stream_sender = @@clientsByName[sender]
+        stream_receiver << "data: #{sender}: #{message}\n\n"
+        stream_sender << "data: #{sender}: #{message}\n\n"
+      else
+        broadcast(message, session['user'])
+      end
     end
     "Message Sent" 
   end
