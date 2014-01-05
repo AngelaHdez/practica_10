@@ -93,6 +93,7 @@ class ChatWithFrames < Sinatra::Base
     puts name
     sender = session['user']
     puts sender
+    #Establecer el chat privado
     if message =~ /\s*\/(\w+):/
       puts "distingue el tipo de mensaje"
       name = $1
@@ -126,9 +127,14 @@ class ChatWithFrames < Sinatra::Base
       else #User not found, then broadcast
         broadcast(message, session['user'])
       end
-    
+    elsif (message == "salir")
+      puts "saliendo del canal"
+      @@private[name]= nil
+      @@private[sender]= nil
     elsif ((@@private[name] == sender) and (@@private[sender]== name))
       puts "mismo canal a y b se envian lo que quieran"
+      puts name
+      puts sender
       stream_receiver = @@clientsByName[name]
       stream_sender = @@clientsByName[sender]
       stream_receiver << "data: #{sender}: #{message}\n\n"
