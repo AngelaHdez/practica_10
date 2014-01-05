@@ -1,5 +1,5 @@
 #chat-room
-  .span9
+  .span5
     #chat{:class => "chat-container"}
     
     .submit-container
@@ -8,7 +8,13 @@
           %input{:type => "text", :id => "message", :placeholder => "Write your message here...", :class => "span6"}
           %button{:class => "btn", :type => "submit", :id => "send-button"} Send
       
-  .span2.pull-right
+  .span2
     #users{:class => "users-container"}
-
+  .span3.pull-right
+    #info 
+      %h2 Instrucciones de uso:
+      %ul
+        %li Escoger un usuario para el chat privado y escribir el mensaje "/nickname:" para ponerse en contacto con ese usuario
+        %li Escribir cualquier comentario que quiera que solamente será mostrado a esa persona
+        %li Para terminar el chat cualquiera de los dos implicados escribirá "salir" y el chat será común
 %script{:src => "custom.js"}

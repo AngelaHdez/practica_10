@@ -11,6 +11,7 @@ class ChatWithFrames < Sinatra::Base
     enable :sessions
   end
   
+  
   # Class variables definition and default assignment
   @@clientsByConnection ||= {}
   @@clientsByName ||= {}
@@ -95,7 +96,7 @@ class ChatWithFrames < Sinatra::Base
       puts name
       sender = session['user']
       puts sender
-      if @@clientsByName.has_key? name
+      if ((@@clientsByName.has_key? name) and (name != sender))
         if ((@@private[name] == nil) and (@@private[sender]==nil)) 
           @@private[name]=sender
           @@private[sender]=name
@@ -116,6 +117,10 @@ class ChatWithFrames < Sinatra::Base
       puts "saliendo del canal"
       sender = session['user']
       puts sender
+      stream_receiver = @@clientsByName[@@private[sender]]
+      stream_sender = @@clientsByName[sender]
+      stream_receiver << "data: Se ha cerrado la conversacion con #{sender}\n\n"
+      stream_sender << "data: Se ha cerrado la conversacion \n\n"
       @@private[@@private[sender]]= nil
       @@private[sender]= nil
     
