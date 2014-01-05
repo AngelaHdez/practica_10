@@ -114,7 +114,9 @@ class ChatWithFrames < Sinatra::Base
       end
     elsif (message == "salir")
       puts "saliendo del canal"
-      @@private[name]= nil
+      sender = session['user']
+      puts sender
+      @@private[@@private[sender]]= nil
       @@private[sender]= nil
     
     else
